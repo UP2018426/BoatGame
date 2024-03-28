@@ -43,4 +43,7 @@ After reading into how games mimic waves and following a few tutorials, I was ab
 
 This does come with the added side effect of having the vertices no longer being manipulated only along the Y-Axis, but also along the path of the wave.
 
+# 27/03/2024 & 28/03/2024
+## Getting the height of a Gerster Wave at a point
 
+The key thing that I had to figure out with the shader approach is to make sure that I can calculate the height of a wave at a certain point. I cannot simply read the vertex positions of the shader because the calculations are on the GPU. I would have to request the vertex positions asynchronously which has the downside of having a couple ms delay, making the calculations inconsistent and inaccurate.
