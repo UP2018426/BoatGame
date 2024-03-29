@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: WaveMaterial
+  m_Name: WaveShaderMaterial
   m_Shader: {fileID: 4800000, guid: 565cdae717334c14dbca91d0c6663c27, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
@@ -118,9 +118,9 @@ Material:
     - _SurfaceColorLod1: {r: 1, g: 1, b: 1, a: 0.5}
     - _WaterColor: {r: 1, g: 1, b: 1, a: 1}
     - _WaterColorLod1: {r: 1, g: 1, b: 1, a: 0.5}
-    - _WaveA: {r: 1.43, g: 0.23, b: 0.33, a: 81}
-    - _WaveB: {r: -0.9, g: -1.48, b: 0.09, a: 14.1}
-    - _WaveC: {r: -1.43, g: 0.82, b: 0.09, a: 7.79}
+    - _WaveA: {r: 1, g: 0.5, b: 0.11, a: 2.78}
+    - _WaveB: {r: 0, g: 1, b: 0.25, a: 20}
+    - _WaveC: {r: 1, g: 1, b: 0.15, a: 10}
     - _WaveOffset: {r: 19, g: 9, b: -16, a: -7}
     - _test: {r: 0, g: 0, b: 0, a: 1}
   m_BuildTextureStacks: []
