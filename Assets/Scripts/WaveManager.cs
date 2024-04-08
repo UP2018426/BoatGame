@@ -7,10 +7,10 @@ public class WaveManager : MonoBehaviour
 {
     public static WaveManager instance;
 
-    public float speed      = 1.0f;
-    public float timePlayed = 0.0f;
+    public float simulationSpeed    = 1.0f;
+    public float timePlayed         = 0.0f;
     [Range(-2.0f, 2.0f)]
-    public float offset     = 0.0f;
+    public float offset             = 0.0f;
 
     // Wave properties. At the moment these need to be set up manually.  
     // TODO: Find a way to find this automatically from the shader
@@ -18,8 +18,13 @@ public class WaveManager : MonoBehaviour
     public Vector4 waveB = new Vector4(0, 1, 0.25f, 20);
     public Vector4 waveC = new Vector4(1, 1, 0.15f, 10);
 
+    public Renderer waveRenderer;
+    public Shader waveShader;
+
     private void Awake()
     {
+        timePlayed = 0;
+
         // Create a Singleton
         if (instance == null)
         {
@@ -35,7 +40,14 @@ public class WaveManager : MonoBehaviour
     private void Update()
     {
         // Update the time since start
-        timePlayed += Time.deltaTime * speed;
+        timePlayed += Time.deltaTime * simulationSpeed;
+
+        if (waveRenderer != null)
+        {
+            waveRenderer.material.SetVector("_WaveA", waveA);
+            waveRenderer.material.SetVector("_WaveB", waveB);
+            waveRenderer.material.SetVector("_WaveC", waveC);
+        }
     }
 
     private float GerstnerWave(Vector4 wave, Vector3 point, float time)

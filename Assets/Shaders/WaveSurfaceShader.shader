@@ -1,4 +1,4 @@
-Shader "Custom/WaveSurfaceShader"
+Shader"Custom/WaveSurfaceShader"
 {
     Properties {
 		_Color ("Color", Color) = (1,1,1,1)

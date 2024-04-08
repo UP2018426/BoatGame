@@ -103,6 +103,7 @@ Material:
     - _Speed: 3.65
     - _SrcBlend: 1
     - _Steepness: 0.339
+    - _TimeSinceStart: 7.02
     - _UVSec: 0
     - _WaterLod1Alpha: 0.546
     - _Wavelength: 6.35

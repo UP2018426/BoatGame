@@ -6,17 +6,19 @@ using UnityEngine;
 [RequireComponent(typeof(MeshRenderer))]
 // This will add the appropriate components on the object if they don't already exist
 
-public class WaterManager : MonoBehaviour
+public class WaterVisuals : MonoBehaviour
 {
     // This is in charge of updating the position of the vertices on the Vertex Wave
     // THE WaterManager IS JUST FOR VISUALISATION PURPOSES
 
     private MeshFilter meshFilter;
 
+#if UNITY_EDITOR
     private void Awake()
     {
         meshFilter = GetComponent<MeshFilter>();
     }
+#endif
 
     private void Update()
     {
