@@ -50,7 +50,7 @@ public class BoatController : MonoBehaviour
         rb.AddForceAtPosition(engineTransform.forward * (power * throttle), engineTransform.position, ForceMode.Force);
         // Steering Force
         rb.AddForceAtPosition(engineTransform.right * (steering * -maxSteerAngle), engineTransform.position, ForceMode.Force);
+
+        Debug.Log("Rigidbody: " + rb.velocity);
     }
-
-
 }
