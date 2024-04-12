@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 public class BoatAi : MonoBehaviour
 {
@@ -9,6 +10,7 @@ public class BoatAi : MonoBehaviour
 
     [SerializeField]
     float directionToTarget = 0; // The direction towards the target from -1 to 1
+    float angleToTarget = 0; // The direction towards the target from -360 to 360
 
     [SerializeField]
     float distanceToTarget;
@@ -58,10 +60,30 @@ public class BoatAi : MonoBehaviour
 
     float CalculateDirectionToTarget()
     {
-        Vector3 temp = (targetLocation.position - transform.position).normalized;
-        //temp.y = 0;
+        //Vector3 temp = (targetLocation.position - transform.position).normalized;
 
-        return (Mathf.Atan(temp.x / temp.z) * 2) / Mathf.PI;
+        Vector3 directionToTarget = targetLocation.position - transform.position;
+
+        // Calculate rotation to face the target
+        Quaternion targetRotation = Quaternion.LookRotation(directionToTarget, Vector3.up);
+
+        // Convert quaternion to euler angles and extract the yaw angle
+        float rv = targetRotation.eulerAngles.y;
+
+        // Find opposite side on a compass
+        if (rv >= 180)
+        {
+            rv -= 180;
+        }
+        else
+        {
+            rv += 180;
+        }
+
+        rv = (rv / 180) - 1;
+
+        return rv;
+        //return (Mathf.Atan(temp.x / temp.z) * 2) / Mathf.PI;
     }
 
     Vector3 CalculateCurrentVelocity()
@@ -79,8 +101,9 @@ public class BoatAi : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        //if (!runInEditMode) {  return; }
+        if (!rb) {  return; }
         Gizmos.color = Color.red;
-        Gizmos.DrawRay(transform.position, CalculateSeekDirection());
+        Gizmos.DrawSphere(CalculateSeekDirection(), 0.5f);
+        Gizmos.DrawLine(transform.position, CalculateSeekDirection());
     }
 }
