@@ -72,7 +72,7 @@ public class BoatAi : MonoBehaviour
 
     void UpdateSteeringValue()
     {
-        thisBoat.steering = CalculateDirectionToTarget(target.position) * steerStrength;
+        thisBoat.steering = (CalculateDirectionToTarget(target.position) / 180) * steerStrength;
 
         Mathf.Clamp(thisBoat.steering, -1, 1);
     }

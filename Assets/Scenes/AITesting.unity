@@ -273,7 +273,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7230363271796636233, guid: 19d6ff61913a5bf47907c5bb1e776050, type: 3}
       propertyPath: maxSteerAngle
-      value: 0.14
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 7230363271796636233, guid: 19d6ff61913a5bf47907c5bb1e776050, type: 3}
       propertyPath: engineTransform
@@ -378,8 +378,8 @@ MonoBehaviour:
   distanceToTarget: 0
   speedLerp: 0
   turnLerp: 0
-  steerStrength: 1
-  maxSpeed: 4.32
+  steerStrength: 1.5
+  maxSpeed: 0
   seekDirection: {x: 0, y: 0, z: 0}
 --- !u!114 &4164240 stripped
 MonoBehaviour:
