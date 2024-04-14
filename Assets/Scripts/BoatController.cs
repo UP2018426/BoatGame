@@ -16,7 +16,9 @@ public class BoatController : MonoBehaviour
 
     [Range(-1, 1)]
     public float steering;
-    public float maxSteerAngle;
+    public float steerForce;
+    public float steerForceMax;
+    public float steeringSpeedMultiplier;
 
 
     // Start is called before the first frame update
@@ -47,9 +49,16 @@ public class BoatController : MonoBehaviour
         rb.centerOfMass = COM.localPosition;
 
         // Apply Power
-        rb.AddForceAtPosition(engineTransform.forward * (power * throttle), engineTransform.position, ForceMode.Force);
+        rb.AddForceAtPosition(engineTransform.forward * (power * throttle), engineTransform.position, ForceMode.Acceleration);
+
         // Steering Force
-        rb.AddForceAtPosition(engineTransform.right * (steering * -maxSteerAngle), engineTransform.position, ForceMode.Force);
+
+        float steeringMultiplier = rb.velocity.magnitude * steeringSpeedMultiplier;
+        Debug.Log(steeringMultiplier);
+        steeringMultiplier = -steerForce * Mathf.Clamp(steeringMultiplier, 1, steerForceMax);
+
+
+        rb.AddForceAtPosition(engineTransform.right * (steering * steeringMultiplier), engineTransform.position, ForceMode.Force);
 
         //Debug.Log("Rigidbody: " + rb.velocity);
     }

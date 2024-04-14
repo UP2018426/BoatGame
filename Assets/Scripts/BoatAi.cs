@@ -7,6 +7,7 @@ public class BoatAi : MonoBehaviour
 {
     //public Vector3 targetLocation;
     public Transform target;
+    public Vector3 navTarget;
 
     public BoatController thisBoat;
 
@@ -45,6 +46,8 @@ public class BoatAi : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        navTarget = CalculateSeekDirection(target.position);
+
         UpdateSteeringValue();
     }
 
@@ -65,14 +68,20 @@ public class BoatAi : MonoBehaviour
 
     Vector3 CalculateSeekDirection(Vector3 targetVector3)
     {
-        Vector3 DesiredVelocity = (targetVector3 - transform.position).normalized * maxSpeed;
+        targetVector3.y = 0f;
+        Vector3 thisPosition = new Vector3(transform.position.x, 0 , transform.position.z);
+        Vector3 DesiredVelocity = (targetVector3 - thisPosition).normalized * maxSpeed;
 
-        return DesiredVelocity - CalculateCurrentVelocity();
+        Vector3 velocity = CalculateCurrentVelocity();
+        velocity.y = 0f;
+
+        return DesiredVelocity - velocity;
     }
 
     void UpdateSteeringValue()
     {
-        thisBoat.steering = (CalculateDirectionToTarget(target.position) / 180) * steerStrength;
+        //thisBoat.steering = (CalculateDirectionToTarget(target.position) / 180) * steerStrength;
+        thisBoat.steering = (CalculateDirectionToTarget(navTarget + transform.position) / 180) * steerStrength;
 
         Mathf.Clamp(thisBoat.steering, -1, 1);
     }
@@ -81,7 +90,7 @@ public class BoatAi : MonoBehaviour
     {
         if (!rb) {  return; }
         Gizmos.color = Color.red;
-        Gizmos.DrawSphere(CalculateSeekDirection(target.position), 0.5f);
-        Gizmos.DrawLine(transform.position, CalculateSeekDirection(target.position));
+        Gizmos.DrawSphere(navTarget + transform.position, 0.5f);
+        Gizmos.DrawLine(transform.position, navTarget + transform.position);
     }
 }
