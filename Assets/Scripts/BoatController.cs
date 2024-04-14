@@ -54,7 +54,7 @@ public class BoatController : MonoBehaviour
         // Steering Force
 
         float steeringMultiplier = rb.velocity.magnitude * steeringSpeedMultiplier;
-        Debug.Log(steeringMultiplier);
+        //Debug.Log(steeringMultiplier);
         steeringMultiplier = -steerForce * Mathf.Clamp(steeringMultiplier, 1, steerForceMax);
 
 
