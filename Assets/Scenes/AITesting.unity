@@ -596,7 +596,7 @@ Transform:
   m_GameObject: {fileID: 868386794}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 19.8, y: 0, z: 44.9}
+  m_LocalPosition: {x: 123.8, y: 0, z: 200.8}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -634,8 +634,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   seeker: {fileID: 7773085898873681867}
   target: {fileID: 868386798}
-  grid: {fileID: 0}
   nextNode: {x: 0, y: 0, z: 0}
+  grid: {fileID: 0}
   pg: {fileID: 0}
 --- !u!114 &1223587303
 MonoBehaviour:
@@ -652,8 +652,8 @@ MonoBehaviour:
   unwalkableMask:
     serializedVersion: 2
     m_Bits: 64
-  gridWorldSize: {x: 100, y: 100}
-  nodeRadius: 1
+  gridWorldSize: {x: 10000, y: 10000}
+  nodeRadius: 20
   drawGizmos: 1
 --- !u!4 &1223587304
 Transform:
@@ -1107,8 +1107,8 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 919132148023491874}
   m_Mesh: {fileID: 2534964839176971238, guid: 3ed446df0a7436b478a784d60bdaa807, type: 3}
---- !u!65 &3469287838614005822
-BoxCollider:
+--- !u!136 &3469287838614005822
+CapsuleCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -1125,8 +1125,10 @@ BoxCollider:
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 0.099999994, y: 0.10000001, z: 0.036504112}
+  serializedVersion: 2
+  m_Radius: 0.049999997
+  m_Height: 0.16
+  m_Direction: 2
   m_Center: {x: 0, y: 0, z: 0.008252055}
 --- !u!1001 &7707623444251948332
 PrefabInstance:
