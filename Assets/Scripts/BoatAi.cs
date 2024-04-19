@@ -7,7 +7,6 @@ public class BoatAi : MonoBehaviour
 {
     //public Vector3 targetLocation;
     public Transform target;
-    public Vector3 navTarget;
 
     public BoatController thisBoat;
 
@@ -28,6 +27,15 @@ public class BoatAi : MonoBehaviour
 
     public Vector3 seekDirection;
 
+    [SerializeField]
+    float arriveSlowingDistance;
+
+    [SerializeField]
+    float arriveSlowingCoef;
+
+    [SerializeField]
+    float speedMultiplier;
+
     Rigidbody rb;
 
     enum BoatAiStates
@@ -46,9 +54,10 @@ public class BoatAi : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        navTarget = CalculateSeekDirection(target.position);
+        UpdateSteeringValue(target.transform.position);
 
-        UpdateSteeringValue();
+        thisBoat.throttle = CalculateArriveVelocity(target);
+        Debug.Log(target.transform.position);
     }
 
     float CalculateDirectionToTarget(Vector3 targetVector3)
@@ -78,19 +87,34 @@ public class BoatAi : MonoBehaviour
         return DesiredVelocity - velocity;
     }
 
-    void UpdateSteeringValue()
+    void UpdateSteeringValue(Vector3 targetPos)
     {
-        //thisBoat.steering = (CalculateDirectionToTarget(target.position) / 180) * steerStrength;
-        thisBoat.steering = (CalculateDirectionToTarget(navTarget + transform.position) / 180) * steerStrength;
+        thisBoat.steering = (CalculateDirectionToTarget(targetPos) / 180) * steerStrength;
 
         Mathf.Clamp(thisBoat.steering, -1, 1);
+    }
+
+    float CalculateArriveVelocity(Transform target)
+    {
+        float distanceToTarget = (target.transform.position - this.transform.position).magnitude;
+
+        if (distanceToTarget < arriveSlowingDistance) 
+        {
+            float speed = distanceToTarget / arriveSlowingCoef;
+
+            speed = Mathf.Clamp01(speed);
+
+            return speed;
+        }
+
+        return 1;
     }
 
     private void OnDrawGizmos()
     {
         if (!rb) {  return; }
         Gizmos.color = Color.red;
-        Gizmos.DrawSphere(navTarget + transform.position, 0.5f);
-        Gizmos.DrawLine(transform.position, navTarget + transform.position);
+        Gizmos.DrawSphere(CalculateSeekDirection(target.transform.position) + transform.position, 0.5f);
+        Gizmos.DrawLine(transform.position, CalculateSeekDirection(target.transform.position) + transform.position);
     }
 }
