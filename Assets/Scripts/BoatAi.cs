@@ -35,6 +35,8 @@ public class BoatAi : MonoBehaviour
 
     Rigidbody rb;
 
+    public bool enableDebug = false;
+
     enum BoatAiStates
     {
         Idle,
@@ -51,10 +53,10 @@ public class BoatAi : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        UpdateSteeringValue(target.transform.position);
+        UpdateSteeringValue(FindCutoffPoint(target));
 
         thisBoat.throttle = CalculateArriveVelocity(target);
-        Debug.Log(target.transform.position);
+        //Debug.Log(target.transform.position);
     }
 
     float CalculateDirectionToTarget(Vector3 targetVector3)
@@ -83,6 +85,29 @@ public class BoatAi : MonoBehaviour
         return DesiredVelocity - velocity;
     }
 
+    Vector3 FindCutoffPoint(Transform targetTransform)
+    {
+        Vector3 targetVector = CleanVector(targetTransform.position);
+        Vector3 thisVector = CleanVector(transform.position);
+
+        Rigidbody targetRb = null;
+        if (targetTransform.gameObject.TryGetComponent<Rigidbody>(out Rigidbody rigidbody))
+        {
+            targetRb = rigidbody;
+        }
+
+        if (targetRb != null)
+        {
+            float lookAheadTime = (targetVector - thisVector).magnitude / (rb.velocity.magnitude + targetRb.velocity.magnitude);
+
+            Vector3 cutoffPoint = targetVector + targetRb.velocity * lookAheadTime;
+
+            return CleanVector(cutoffPoint);
+        }
+
+        return target.position;
+    }
+
     void UpdateSteeringValue(Vector3 targetPos)
     {
         thisBoat.steering = (CalculateDirectionToTarget(targetPos) / 180) * steerStrength;
@@ -106,11 +131,17 @@ public class BoatAi : MonoBehaviour
         return 1;
     }
 
+    Vector3 CleanVector(Vector3 vector)
+    {
+        return new Vector3(vector.x, 0, vector.z);
+    }
+
     private void OnDrawGizmos()
     {
         if (!rb) {  return; }
         Gizmos.color = Color.red;
-        Gizmos.DrawSphere(CalculateSeekDirection(target.transform.position) + transform.position, 0.5f);
-        Gizmos.DrawLine(transform.position, CalculateSeekDirection(target.transform.position) + transform.position);
+        /*Gizmos.DrawSphere(CalculateSeekDirection(target.transform.position) + transform.position, 0.5f);
+        Gizmos.DrawLine(transform.position, CalculateSeekDirection(target.transform.position) + transform.position);*/
+        //Gizmos.DrawSphere(FindCutoffPoint(target), 0.5f);
     }
 }
