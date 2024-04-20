@@ -31,9 +31,6 @@ public class BoatAi : MonoBehaviour
     float arriveSlowingDistance;
 
     [SerializeField]
-    float arriveSlowingCoef;
-
-    [SerializeField]
     float speedMultiplier;
 
     Rigidbody rb;
@@ -71,7 +68,6 @@ public class BoatAi : MonoBehaviour
 
     Vector3 CalculateCurrentVelocity()
     {
-        //return (transform.position - lastFramePosition) / Time.deltaTime;
         return rb.velocity;
     }
 
@@ -100,7 +96,7 @@ public class BoatAi : MonoBehaviour
 
         if (distanceToTarget < arriveSlowingDistance) 
         {
-            float speed = distanceToTarget / arriveSlowingCoef;
+            float speed = distanceToTarget / arriveSlowingDistance;
 
             speed = Mathf.Clamp01(speed);
 
