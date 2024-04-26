@@ -1285,14 +1285,6 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 1254421763384604628, guid: 19d6ff61913a5bf47907c5bb1e776050, type: 3}
-      propertyPath: power
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1254421763384604628, guid: 19d6ff61913a5bf47907c5bb1e776050, type: 3}
-      propertyPath: throttle
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1254421763384604628, guid: 19d6ff61913a5bf47907c5bb1e776050, type: 3}
       propertyPath: steerForce
       value: 0.1
       objectReference: {fileID: 0}
