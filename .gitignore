@@ -9,6 +9,7 @@
 /[Bb]uilds/
 /[Ll]ogs/
 /[Uu]ser[Ss]ettings/
+
 /.vscode/
 
 # MemoryCaptures can get excessive in size.
@@ -52,9 +53,6 @@ ExportedObj/
 *.pidb.meta
 *.pdb.meta
 *.mdb.meta
-
-*.meta
-*.blend1*
 
 # Unity3D generated file on crash reports
 sysinfo.txt
