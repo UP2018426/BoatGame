@@ -60,7 +60,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6984621532045180932}
   m_Layer: 0
-  m_Name: COM
+  m_Name: CenterOfMass
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -388,8 +388,10 @@ GameObject:
   m_Component:
   - component: {fileID: 6996142247457764885}
   - component: {fileID: 4110654563209904072}
+  - component: {fileID: 8117210620544323020}
   - component: {fileID: 1254421763384604628}
   - component: {fileID: 8338300758390911325}
+  - component: {fileID: 3484876549864122405}
   m_Layer: 0
   m_Name: BoatPrefab
   m_TagString: Untagged
@@ -448,6 +450,27 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!65 &8117210620544323020
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4885692612812078318}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 2.14, y: 7.850659, z: 7.302988}
+  m_Center: {x: 0, y: 3.4253294, z: 0.6929984}
 --- !u!114 &1254421763384604628
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -460,12 +483,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e7af15452add50b40bbd53576a4fee6e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  COM: {fileID: 6984621532045180932}
+  centerOfMass: {fileID: 6984621532045180932}
   engineTransform: {fileID: 5810256260356836984}
   throttle: 0
   power: 1
   steering: 0
-  maxSteerAngle: 0.01
+  steerForce: 0
+  steerForceMax: 0
+  steeringSpeedMultiplier: 0
 --- !u!114 &8338300758390911325
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -479,14 +504,36 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 0}
-  thisBoat: {fileID: 1254421763384604628}
-  directionToTarget: 0
-  distanceToTarget: 0
-  speedLerp: 0
-  turnLerp: 0
+  navigationTarget: {x: 0, y: 0, z: 0}
+  role: 0
+  boatAiState: 0
+  idleTime: 0
+  portTransforms: []
   steerStrength: 2
-  maxSpeed: 0
-  seekDirection: {x: 0, y: 0, z: 0}
+  arriveSlowingDistance: 0
+  stopDistance: 0
+  speedMultiplier: 0
+  pathfindIgnore:
+    serializedVersion: 2
+    m_Bits: 0
+--- !u!114 &3484876549864122405
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4885692612812078318}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05af2b26b857e4b46a4947f8d13dc6a8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  seeker: {x: 0, y: 0, z: 0}
+  target: {x: 0, y: 0, z: 0}
+  nextNode: {x: 0, y: 0, z: 0}
+  grid: {fileID: 0}
+  vector3Path: []
+  boatAi: {fileID: 0}
 --- !u!1 &4991192992414735622
 GameObject:
   m_ObjectHideFlags: 0

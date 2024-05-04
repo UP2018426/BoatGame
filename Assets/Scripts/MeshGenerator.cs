@@ -39,8 +39,6 @@ public class MeshGenerator : MonoBehaviour
         {
             CreatePlaneMesh();
             UpdateMesh();
-
-            updateMesh = false;
         }
     }
 

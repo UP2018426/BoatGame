@@ -16,7 +16,13 @@ public class PathGrid : MonoBehaviour
     public List<Node> path;
 
     [SerializeField]
-    private bool drawGizmos;
+    bool drawGrid;
+
+    [SerializeField]
+    bool drawOutline;
+
+    [SerializeField]
+    bool updateNav;
 
     // Start is called before the first frame update
     void Start()
@@ -25,6 +31,16 @@ public class PathGrid : MonoBehaviour
         gridSizeX = Mathf.RoundToInt(gridWorldSize.x / nodeDiameter);
         gridSizeY = Mathf.RoundToInt(gridWorldSize.y / nodeDiameter);
         CreateGrid();
+    }
+
+    private void Update()
+    {
+        if (updateNav)
+        {
+            CreateGrid();
+
+            updateNav = false;
+        }
     }
 
     void CreateGrid()
@@ -83,9 +99,9 @@ public class PathGrid : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        if (drawGizmos)
+        if (drawGrid)
         {
-            Gizmos.DrawWireCube(transform.position, new Vector3(gridWorldSize.x, 1, gridWorldSize.y));
+            //Gizmos.DrawWireCube(transform.position, new Vector3(gridWorldSize.x, 1, gridWorldSize.y));
 
             if (grid != null)
             {
@@ -100,9 +116,14 @@ public class PathGrid : MonoBehaviour
                         }
 
                     }
-                    Gizmos.DrawCube(node.worldPos, Vector3.one * (nodeDiameter - 0.1f));
+                    Gizmos.DrawCube(node.worldPos, Vector3.one * (nodeDiameter * 0.8f));
                 }
             }
+        }
+
+        if (drawOutline)
+        {
+            Gizmos.DrawWireCube(transform.position, new Vector3(gridWorldSize.x, 1, gridWorldSize.y));
         }
     }
 }

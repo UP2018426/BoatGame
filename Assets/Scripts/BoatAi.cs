@@ -1,62 +1,190 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using static UnityEngine.GraphicsBuffer;
+using Random = UnityEngine.Random;
 
 public class BoatAi : MonoBehaviour
 {
-    //public Vector3 targetLocation;
-    public Transform target;
-
-    public BoatController thisBoat;
-
-    [SerializeField]
-    float directionToTarget = 0; // The direction towards the target from -1 to 1
-
-    [SerializeField]
-    float distanceToTarget;
-
-    [SerializeField]
-    float speedLerp, turnLerp;
-
-    [SerializeField]
-    float steerStrength;
-
-    [SerializeField]
-    public float maxSpeed;
-
-    public Vector3 seekDirection;
-
-    [SerializeField]
-    float arriveSlowingDistance;
-
-    [SerializeField]
-    float speedMultiplier;
-
-    Rigidbody rb;
-
-    public bool enableDebug = false;
-
     enum BoatAiStates
     {
+        None = 0,
         Idle,
         Wandering,
-        Patrolling,
+        Travelling,
         Following
     }
+
+    enum BoatAiRole
+    {
+        None = 0,
+        Merchant,
+        Fishing,
+        Tanker,
+    }
+
+    public Transform target;
+
+    [SerializeField] private Vector3 navigationTarget;
+
+    private BoatController thisBoatController;
+
+    [SerializeField] private BoatAiRole role;
+
+    [SerializeField] private BoatAiStates boatAiState;
+    
+    private BoatAiStates lastAiState;
+
+    [SerializeField] public float idleTime;
+
+    [SerializeField] private List<Transform> portTransforms;
+
+    [SerializeField] private float steerStrength = 2;
+
+    [SerializeField] private float arriveSlowingDistance;
+
+    [SerializeField] private float stopDistance;
+
+    [SerializeField] private float speedMultiplier;
+    
+    private Rigidbody rb;
+
+    private Pathfinding pathfinding;
+
+    [SerializeField] private LayerMask pathfindIgnore;
 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
+        thisBoatController = GetComponent<BoatController>();
+        pathfinding = GetComponent<Pathfinding>();
+
+        if (boatAiState == BoatAiStates.None)
+        {
+            if (role == BoatAiRole.Merchant)
+            {
+                boatAiState = BoatAiStates.Travelling;
+            }
+        }
     }
 
-    // Update is called once per frame
     void Update()
     {
-        UpdateSteeringValue(FindCutoffPoint(target));
+        if (lastAiState != boatAiState)
+        {
+            lastAiState = boatAiState;
+            AiStateChanged(boatAiState);
+        }
+        
+        if (boatAiState == BoatAiStates.Idle)
+        {
+            idleTime -= Time.deltaTime;
+            if (idleTime < 0.0f)
+            {
+                boatAiState = BoatAiStates.Travelling;
+            }
+        }
+        
+        if (boatAiState == BoatAiStates.Travelling)
+        {
+            UpdateNavigationTarget(target);
+            
+            UpdateSteeringValue(navigationTarget);
+            
+            thisBoatController.throttle = CalculateArriveVelocity(target.position);
+        }
+    }
 
-        thisBoat.throttle = CalculateArriveVelocity(target);
-        //Debug.Log(target.transform.position);
+    private void OnTriggerEnter(Collider collider)
+    {
+        if (collider.TryGetComponent<Port>(out Port port))
+        {
+            if (target.gameObject == port.gameObject)
+            {
+                Debug.Log("Entered port");
+
+                boatAiState = BoatAiStates.Idle;
+            }
+        }
+    }
+
+    void AiStateChanged(BoatAiStates newState)
+    {
+        if (newState == BoatAiStates.Idle)
+        {
+            thisBoatController.steering = 0;
+            thisBoatController.throttle = 0;
+
+            idleTime = 5.0f;
+        }
+
+        if (boatAiState == BoatAiStates.Travelling)
+        {
+            FindTarget();
+        }
+    }
+
+    void GetAllPorts()
+    {
+        portTransforms.Clear();
+
+        GameObject[] ports = GameObject.FindGameObjectsWithTag("Port");
+
+        foreach (GameObject port in ports)
+        {
+            portTransforms.Add(port.transform);
+        }
+    }
+
+    void FindTarget()
+    {
+        if (role == BoatAiRole.Merchant)
+        {
+            GetAllPorts();
+
+            int closestIndex = 0;
+            float closestDistance = float.MaxValue;
+
+            // Find nearest port
+            for (int i = 0; i < portTransforms.Count; i++)
+            {
+                if ((portTransforms[i].position - transform.position).magnitude < closestDistance)
+                {
+                    closestDistance = (portTransforms[i].position - transform.position).magnitude;
+                    closestIndex = i;
+                }
+            }
+
+            portTransforms.RemoveAt(closestIndex);
+
+            // Find a random port that is NOT the nearest one
+            int randomIndex = Random.Range(0, portTransforms.Count - 1);
+            target = portTransforms[randomIndex];
+        }
+    }
+
+    void UpdateNavigationTarget(Transform targetTransform)
+    {
+        Vector3 cutoffPoint = FindCutoffPoint(targetTransform);
+
+        RaycastHit hit;
+        if (Physics.Raycast(cutoffPoint, transform.position - cutoffPoint, out hit, Mathf.Infinity, ~pathfindIgnore))
+        {
+            if (hit.collider.gameObject == this.gameObject)
+            {
+                navigationTarget = cutoffPoint;
+                Debug.DrawLine(cutoffPoint, transform.position, Color.green);
+            }
+            else
+            {
+                // TODO: For now just grabbing the next node in the pathfinding solution. 
+                // Instead, find the furthest visible pathfinding node and travel there 
+                navigationTarget = pathfinding.FindPathList(transform.position, targetTransform.transform.position)[0];
+
+                Debug.DrawLine(pathfinding.nextNode, transform.position, Color.red);
+            }
+        }
     }
 
     float CalculateDirectionToTarget(Vector3 targetVector3)
@@ -77,7 +205,7 @@ public class BoatAi : MonoBehaviour
     {
         targetVector3.y = 0f;
         Vector3 thisPosition = new Vector3(transform.position.x, 0 , transform.position.z);
-        Vector3 DesiredVelocity = (targetVector3 - thisPosition).normalized * maxSpeed;
+        Vector3 DesiredVelocity = (targetVector3 - thisPosition).normalized * CalculateCurrentVelocity().magnitude;
 
         Vector3 velocity = CalculateCurrentVelocity();
         velocity.y = 0f;
@@ -90,35 +218,36 @@ public class BoatAi : MonoBehaviour
         Vector3 targetVector = CleanVector(targetTransform.position);
         Vector3 thisVector = CleanVector(transform.position);
 
-        Rigidbody targetRb = null;
-        if (targetTransform.gameObject.TryGetComponent<Rigidbody>(out Rigidbody rigidbody))
+        if (targetTransform.gameObject.TryGetComponent<Rigidbody>(out Rigidbody rigidbodyComponent))
         {
-            targetRb = rigidbody;
+            if (rigidbodyComponent)
+            {
+                float lookAheadTime = (targetVector - thisVector).magnitude / (rb.velocity.magnitude + rigidbodyComponent.velocity.magnitude);
+
+                Vector3 cutoffPoint = targetVector + rigidbodyComponent.velocity * lookAheadTime;
+
+                return CleanVector(cutoffPoint);
+            }
         }
-
-        if (targetRb != null)
-        {
-            float lookAheadTime = (targetVector - thisVector).magnitude / (rb.velocity.magnitude + targetRb.velocity.magnitude);
-
-            Vector3 cutoffPoint = targetVector + targetRb.velocity * lookAheadTime;
-
-            return CleanVector(cutoffPoint);
-        }
-
-        return target.position;
+        
+        return targetVector;
     }
 
     void UpdateSteeringValue(Vector3 targetPos)
     {
-        thisBoat.steering = (CalculateDirectionToTarget(targetPos) / 180) * steerStrength;
+        thisBoatController.steering = (CalculateDirectionToTarget(targetPos) / 180) * steerStrength;
 
-        Mathf.Clamp(thisBoat.steering, -1, 1);
+        Mathf.Clamp(thisBoatController.steering, -1, 1);
     }
 
-    float CalculateArriveVelocity(Transform target)
+    float CalculateArriveVelocity(Vector3 target)
     {
-        float distanceToTarget = (target.transform.position - this.transform.position).magnitude;
+        float distanceToTarget = (target - this.transform.position).magnitude;
 
+        if (distanceToTarget < stopDistance)
+        {
+            return 0.0f;
+        }
         if (distanceToTarget < arriveSlowingDistance) 
         {
             float speed = distanceToTarget / arriveSlowingDistance;
@@ -128,7 +257,7 @@ public class BoatAi : MonoBehaviour
             return speed;
         }
 
-        return 1;
+        return 1.0f;
     }
 
     Vector3 CleanVector(Vector3 vector)
