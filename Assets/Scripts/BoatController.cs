@@ -7,7 +7,7 @@ public class BoatController : MonoBehaviour
     private Rigidbody rb;
 
     [SerializeField]
-    private Transform COM, engineTransform;
+    private Transform centerOfMass, engineTransform;
 
     // Controls
     [Range(0, 1)]
@@ -33,7 +33,7 @@ public class BoatController : MonoBehaviour
             buoys[i].buoyancyPoints = buoys.Length;
         }
 
-        if (COM != null)
+        if (centerOfMass != null)
         {
             rb.automaticCenterOfMass = false;
         }
@@ -46,7 +46,7 @@ public class BoatController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        rb.centerOfMass = COM.localPosition;
+        rb.centerOfMass = centerOfMass.localPosition;
 
         // Apply Power
         rb.AddForceAtPosition(engineTransform.forward * (power * throttle), engineTransform.position, ForceMode.Acceleration);
