@@ -5,7 +5,7 @@ using UnityEngine;
 public class DebugManager : MonoBehaviour
 {
     [SerializeField] private bool increaseSpeed = false;
-    [SerializeField] private float timeMultiplier = 1.0f;
+    [SerializeField, Range(1.0f, 16.0f)] private float timeMultiplier = 1.0f;
     private float timeMultiplierLaterFrame = 0.0f;
 
     // Update is called once per frame

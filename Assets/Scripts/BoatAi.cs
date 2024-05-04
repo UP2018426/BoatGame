@@ -125,23 +125,26 @@ public class BoatAi : MonoBehaviour
         }
     }
 
-    void GetAllPorts()
+    List<Transform> GetAllPorts()
     {
-        portTransforms.Clear();
+        List<Transform> returnList = new();
 
         GameObject[] ports = GameObject.FindGameObjectsWithTag("Port");
 
         foreach (GameObject port in ports)
         {
-            portTransforms.Add(port.transform);
+            returnList.Add(port.transform);
         }
+
+        return returnList;
     }
 
     void FindTarget()
     {
         if (role == BoatAiRole.Merchant)
         {
-            GetAllPorts();
+            portTransforms.Clear();
+            portTransforms = GetAllPorts();
 
             int closestIndex = 0;
             float closestDistance = float.MaxValue;
@@ -149,17 +152,21 @@ public class BoatAi : MonoBehaviour
             // Find nearest port
             for (int i = 0; i < portTransforms.Count; i++)
             {
-                if ((portTransforms[i].position - transform.position).magnitude < closestDistance)
+                float distFromPort = (portTransforms[i].position - transform.position).magnitude;
+                if (distFromPort < closestDistance)
                 {
                     closestDistance = (portTransforms[i].position - transform.position).magnitude;
                     closestIndex = i;
                 }
             }
 
+            Debug.Log("Removed Port " + portTransforms[closestIndex].gameObject.name);
             portTransforms.RemoveAt(closestIndex);
 
             // Find a random port that is NOT the nearest one
-            int randomIndex = Random.Range(0, portTransforms.Count - 1);
+            // Note: RangeMax is Exclusive not Inclusive!
+            int randomIndex = Random.Range(0, portTransforms.Count);
+            Debug.Log(randomIndex);
             target = portTransforms[randomIndex];
         }
     }
