@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -21,7 +22,6 @@ public class BoatController : MonoBehaviour
     public float steeringSpeedMultiplier;
 
 
-    // Start is called before the first frame update
     void Start()
     {
         Buoyancy[] buoys = transform.GetComponentsInChildren<Buoyancy>();
@@ -43,7 +43,6 @@ public class BoatController : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
     void Update()
     {
         rb.centerOfMass = centerOfMass.localPosition;
@@ -59,7 +58,10 @@ public class BoatController : MonoBehaviour
 
 
         rb.AddForceAtPosition(engineTransform.right * (steering * steeringMultiplier), engineTransform.position, ForceMode.Force);
+    }
 
-        //Debug.Log("Rigidbody: " + rb.velocity);
+    private void OnCollisionEnter(Collision other)
+    {
+        Debug.LogWarning(gameObject.name + " has collided with " + other.gameObject.name);
     }
 }

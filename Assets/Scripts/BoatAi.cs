@@ -128,7 +128,8 @@ public class BoatAi : MonoBehaviour
     List<Transform> GetAllPorts()
     {
         List<Transform> returnList = new();
-
+        
+        // TODO: Needs to be optimised. Maybe have a GameManager that stores all ports rather than recalculating
         GameObject[] ports = GameObject.FindGameObjectsWithTag("Port");
 
         foreach (GameObject port in ports)
@@ -159,14 +160,12 @@ public class BoatAi : MonoBehaviour
                     closestIndex = i;
                 }
             }
-
-            Debug.Log("Removed Port " + portTransforms[closestIndex].gameObject.name);
+            
             portTransforms.RemoveAt(closestIndex);
 
             // Find a random port that is NOT the nearest one
             // Note: RangeMax is Exclusive not Inclusive!
             int randomIndex = Random.Range(0, portTransforms.Count);
-            Debug.Log(randomIndex);
             target = portTransforms[randomIndex];
         }
     }
@@ -187,9 +186,12 @@ public class BoatAi : MonoBehaviour
             {
                 // TODO: For now just grabbing the next node in the pathfinding solution. 
                 // Instead, find the furthest visible pathfinding node and travel there 
-                navigationTarget = pathfinding.FindPathList(transform.position, targetTransform.transform.position)[0];
-
-                Debug.DrawLine(pathfinding.nextNode, transform.position, Color.red);
+                //navigationTarget = pathfinding.FindPathList(transform.position, targetTransform.transform.position)[0];
+                if (pathfinding.vector3Path.Count > 0)
+                {
+                    navigationTarget = pathfinding.vector3Path[0];
+                    Debug.DrawLine(pathfinding.vector3Path[0], transform.position, Color.red);
+                }
             }
         }
     }

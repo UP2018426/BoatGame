@@ -392,7 +392,6 @@ GameObject:
   - component: {fileID: 1254421763384604628}
   - component: {fileID: 8338300758390911325}
   - component: {fileID: 3484876549864122405}
-  - component: {fileID: 21509761502563367}
   - component: {fileID: 5712463806470065132}
   m_Layer: 0
   m_Name: BoatPrefab
@@ -536,19 +535,6 @@ MonoBehaviour:
   grid: {fileID: 0}
   vector3Path: []
   boatAi: {fileID: 0}
---- !u!114 &21509761502563367
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4885692612812078318}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b3d5511ea9902f542b1718bbc0782c6e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  bVisualise: 0
 --- !u!96 &5712463806470065132
 TrailRenderer:
   serializedVersion: 3
