@@ -205,6 +205,27 @@ public class BoatAi : MonoBehaviour
         return angle;
     }
 
+    float CalculateAvoidanceForce(Vector3 targetVector3)
+    {
+        float D = 0.0f; // Size of trigger collider attached to This.
+        List<BoatController> boats = new(); // Check using OnCollisionEnter/Exit to keep track of ships using the trigger collider
+        
+        // Have a list of all obstacles within distance D
+        // For each object, determine that angle it is from the boat using the method in CalculateDirectionToTarget().
+        // For each object within a FOV angle F, calculate its cutoff point using the existing function FindCutoffPoint(). maybe dont have FOV???
+        // For each cutoff point that lands in a smaller dot product value in front of the ship, find the nearest one
+            // Find if this point is left or right of us
+            // Find the dot product to the point (PointAngle).
+            // If the point is to the left of us do PointAngle * -1 (flip the angle)
+            // Calculate some multipliers for steering
+                // Our distance to the point
+                // Our speed
+                // ???
+        // Return PointAngle * "some multipliers for steering" 
+
+        return 0.0f;
+    }
+
     Vector3 CalculateCurrentVelocity()
     {
         return rb.velocity;
