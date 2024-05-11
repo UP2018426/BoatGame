@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using static UnityEngine.GraphicsBuffer;
 using Random = UnityEngine.Random;
@@ -54,6 +55,10 @@ public class BoatAi : MonoBehaviour
 
     [SerializeField] private LayerMask pathfindIgnore;
 
+    [SerializeField] private List<BoatController> boatsInRange = new();
+
+    [SerializeField] private float sightRange = 25.0f;
+
     void Start()
     {
         rb = GetComponent<Rigidbody>();
@@ -67,6 +72,12 @@ public class BoatAi : MonoBehaviour
                 boatAiState = BoatAiStates.Travelling;
             }
         }
+        
+        // Create a Sphere Collider trigger 
+        SphereCollider colldier = gameObject.AddComponent<SphereCollider>();
+        colldier.isTrigger = true;
+        colldier.center = new Vector3(0, 0, 0);
+        colldier.radius = sightRange;
     }
 
     void Update()
@@ -96,15 +107,34 @@ public class BoatAi : MonoBehaviour
         }
     }
 
-    private void OnTriggerEnter(Collider collider)
+    private void OnTriggerEnter(Collider otherCollider)
     {
-        if (collider.TryGetComponent<Port>(out Port port))
+        if (otherCollider.TryGetComponent<Port>(out Port port))
         {
             if (target.gameObject == port.gameObject)
             {
                 Debug.Log("Entered port");
 
                 boatAiState = BoatAiStates.Idle;
+            }
+        }
+
+        if (otherCollider.TryGetComponent<BoatController>(out BoatController otherBoat))
+        {
+            if (!boatsInRange.Contains(otherBoat))
+            {
+                boatsInRange.Add(otherBoat);
+            }
+        }
+    }
+
+    private void OnTriggerExit(Collider otherCollider)
+    {
+        if (otherCollider.TryGetComponent<BoatController>(out BoatController otherBoat))
+        {
+            if (boatsInRange.Contains(otherBoat))
+            {
+                boatsInRange.Remove(otherBoat);
             }
         }
     }
@@ -174,26 +204,33 @@ public class BoatAi : MonoBehaviour
     {
         Vector3 cutoffPoint = FindCutoffPoint(targetTransform);
 
+        Vector3 rayDirection = cutoffPoint - transform.position;
         RaycastHit hit;
-        if (Physics.Raycast(cutoffPoint, transform.position - cutoffPoint, out hit, Mathf.Infinity, ~pathfindIgnore))
+        //if (Physics.Raycast(cutoffPoint, transform.position - cutoffPoint, out hit, Mathf.Infinity, ~pathfindIgnore))
+        if (Physics.Raycast(transform.position, rayDirection, out hit, rayDirection.magnitude, ~pathfindIgnore))
         {
-            if (hit.collider.gameObject == this.gameObject)
+            if (hit.collider.gameObject == target.gameObject)
             {
                 navigationTarget = cutoffPoint;
                 Debug.DrawLine(cutoffPoint, transform.position, Color.green);
             }
-            else
+            
+            // TODO: For now just grabbing the next node in the pathfinding solution. 
+            // Instead, find the furthest visible pathfinding node and travel there 
+            //navigationTarget = pathfinding.FindPathList(transform.position, targetTransform.transform.position)[0];
+            else if (pathfinding.vector3Path.Count > 0)
             {
-                // TODO: For now just grabbing the next node in the pathfinding solution. 
-                // Instead, find the furthest visible pathfinding node and travel there 
-                //navigationTarget = pathfinding.FindPathList(transform.position, targetTransform.transform.position)[0];
-                if (pathfinding.vector3Path.Count > 0)
-                {
-                    navigationTarget = pathfinding.vector3Path[0];
-                    Debug.DrawLine(pathfinding.vector3Path[0], transform.position, Color.red);
-                }
+                navigationTarget = pathfinding.vector3Path[0];
+                Debug.DrawLine(pathfinding.vector3Path[0], transform.position, Color.red);
             }
         }
+        /*else
+        {
+            Debug.Log("Ray missed");
+            
+            navigationTarget = cutoffPoint;
+            Debug.DrawLine(cutoffPoint, transform.position, Color.green);
+        }*/
     }
 
     float CalculateDirectionToTarget(Vector3 targetVector3)
@@ -205,24 +242,73 @@ public class BoatAi : MonoBehaviour
         return angle;
     }
 
-    float CalculateAvoidanceForce(Vector3 targetVector3)
+    float CalculateAvoidanceForce()
     {
-        float D = 0.0f; // Size of trigger collider attached to This.
-        List<BoatController> boats = new(); // Check using OnCollisionEnter/Exit to keep track of ships using the trigger collider
-        
-        // Have a list of all obstacles within distance D
-        // For each object, determine that angle it is from the boat using the method in CalculateDirectionToTarget().
-        // For each object within a FOV angle F, calculate its cutoff point using the existing function FindCutoffPoint(). maybe dont have FOV???
-        // For each cutoff point that lands in a smaller dot product value in front of the ship, find the nearest one
+        if (boatsInRange.Count > 0)
+        {
+            List<Vector3> cutoffPoints = new();
+            List<Vector3> cutoffPointsShortlist = new();
+            // Have a list of all obstacles within distance D
+            // For each object, determine that angle it is from the boat using the method in CalculateDirectionToTarget().
+    
+            for (int i = 0; i < boatsInRange.Count; i++)
+            {
+                cutoffPoints.Add(FindCutoffPoint(boatsInRange[i].gameObject.transform));
+            }
+            
+            for (int i = 0; i < cutoffPoints.Count; i++)
+            {
+                float directionToTarget = CalculateDirectionToTarget(cutoffPoints[i]);
+    
+                if (directionToTarget is < 90 and > -90)
+                {
+                    cutoffPointsShortlist.Add(cutoffPoints[i]);
+                    
+                    /*float distance = (cutoffPoints[i] - transform.position).magnitude;
+                    if (closestDistance > distance)
+                    {
+                        closestIndex = i;
+                        closestDistance = distance;
+                        indexDirectionToTarget = directionToTarget;
+                    }*/
+                }
+            }
+            
+            int closestIndex = 0;
+            float closestDistance = float.MaxValue;
+            float indexDirectionToTarget = 0.0f;
+    
+            for (int i = 0; i < cutoffPointsShortlist.Count; i++)
+            {
+                float directionToTarget = CalculateDirectionToTarget(cutoffPointsShortlist[i]);
+                Debug.Log(directionToTarget);
+                
+                float distance = (cutoffPoints[i] - transform.position).magnitude;
+                if (closestDistance > distance)
+                {
+                    closestIndex = i;
+                    closestDistance = distance;
+                    indexDirectionToTarget = directionToTarget;
+                }
+            }
+    
+            return /*float steerForce = */indexDirectionToTarget > 0 ? -1 : 1;
+    
+    
+    
+            // For each object within a FOV angle F, calculate its cutoff point using the existing function FindCutoffPoint(). maybe dont have FOV???
+            // For each cutoff point that lands in a smaller dot product value in front of the ship, find the nearest one
             // Find if this point is left or right of us
             // Find the dot product to the point (PointAngle).
             // If the point is to the left of us do PointAngle * -1 (flip the angle)
             // Calculate some multipliers for steering
-                // Our distance to the point
-                // Our speed
-                // ???
-        // Return PointAngle * "some multipliers for steering" 
-
+            // Our distance to the point
+            // Our speed
+            // ???
+            // Return PointAngle * "some multipliers for steering" 
+    
+        } 
+        
         return 0.0f;
     }
 
@@ -267,6 +353,11 @@ public class BoatAi : MonoBehaviour
     {
         thisBoatController.steering = (CalculateDirectionToTarget(targetPos) / 180) * steerStrength;
 
+        if (boatsInRange.Count > 0)
+        {
+            thisBoatController.steering += CalculateAvoidanceForce();
+        }
+        
         Mathf.Clamp(thisBoatController.steering, -1, 1);
     }
 

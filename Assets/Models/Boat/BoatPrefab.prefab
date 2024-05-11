@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8977422537660468941}
   - component: {fileID: 7607479740092704619}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Buoy_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -59,7 +59,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6984621532045180932}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: CenterOfMass
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -91,7 +91,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4248721832190331508}
   - component: {fileID: 2427972952817944998}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Buoy_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -142,7 +142,7 @@ GameObject:
   - component: {fileID: 3019349588569047315}
   - component: {fileID: 3738341378976287138}
   - component: {fileID: 7632810220327112067}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -224,7 +224,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4759839705157548009}
   - component: {fileID: 1868086724128016087}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Buoy_5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -275,7 +275,7 @@ GameObject:
   - component: {fileID: 3796228052307315226}
   - component: {fileID: 2288937071231052245}
   - component: {fileID: 5788346451607576612}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Cylinder
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -356,7 +356,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5810256260356836984}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: EngineTransform
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -393,9 +393,9 @@ GameObject:
   - component: {fileID: 8338300758390911325}
   - component: {fileID: 3484876549864122405}
   - component: {fileID: 5712463806470065132}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: BoatPrefab
-  m_TagString: Untagged
+  m_TagString: Boat
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -517,6 +517,8 @@ MonoBehaviour:
   pathfindIgnore:
     serializedVersion: 2
     m_Bits: 0
+  boatsInRange: []
+  sightRange: 25
 --- !u!114 &3484876549864122405
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -531,7 +533,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   seeker: {x: 0, y: 0, z: 0}
   target: {x: 0, y: 0, z: 0}
-  nextNode: {x: 0, y: 0, z: 0}
   grid: {fileID: 0}
   vector3Path: []
   boatAi: {fileID: 0}
@@ -650,7 +651,7 @@ GameObject:
   - component: {fileID: 442024753900751865}
   - component: {fileID: 1238633138779232715}
   - component: {fileID: 7410822331324835908}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Cube.001
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -732,7 +733,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3069134164511300217}
   - component: {fileID: 5908235099659311972}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Buoy_6
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -781,7 +782,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8527839137779906380}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Visuals
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -817,7 +818,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1474345611580023764}
   - component: {fileID: 1813633792812129172}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Buoy_3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -867,7 +868,7 @@ GameObject:
   m_Component:
   - component: {fileID: 771616678616892734}
   - component: {fileID: 2814110841715886439}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Buoy_4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -918,7 +919,7 @@ GameObject:
   - component: {fileID: 1776967313079427330}
   - component: {fileID: 3591832436023362325}
   - component: {fileID: 2985061525348411898}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Cube.002
   m_TagString: Untagged
   m_Icon: {fileID: 0}
