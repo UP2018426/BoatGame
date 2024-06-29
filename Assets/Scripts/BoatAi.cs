@@ -63,6 +63,8 @@ public class BoatAi : MonoBehaviour
     [Header("Follow Camera")]
     public Vector3 cameraLookPosition;
 
+    public float AngleWeightScalar, DistanceWeightScalar;
+
     void Start()
     {
         rb = GetComponent<Rigidbody>();
@@ -295,7 +297,7 @@ public class BoatAi : MonoBehaviour
                 }
             }
 
-            float directionMultiplier = indexDirectionToTarget > 0 ? -1 : 1;
+            //float directionMultiplier = indexDirectionToTarget > 0 ? -1 : 1;
 
             // DirectionScale * Distancescale * direction
             if (cutoffPointsShortlist.Count > 0)
@@ -304,7 +306,7 @@ public class BoatAi : MonoBehaviour
 
                 float distanceWeight = (((cutoffPointsShortlist[closestIndex] - transform.position).magnitude * -1) + sightRange) / sightRange;
                 
-                float rv = (-angleWeight * (distanceWeight * 100f))/* * directionMultiplier*/;
+                float rv = (-(angleWeight * AngleWeightScalar) + -(distanceWeight * DistanceWeightScalar));
 
                 thisBoatController.throttle = distanceWeight;
 

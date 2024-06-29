@@ -15,7 +15,9 @@ public class GridGeneration : MonoBehaviour
 
     void Start()
     {
+#if !UNITY_WEBGL || UNITY_EDITOR
         GenerateMeshArray();
+#endif
     }
 
     private void Update()
@@ -24,11 +26,11 @@ public class GridGeneration : MonoBehaviour
         {
             refreshMesh = false;
 
-            foreach (var mesh in meshList)
+            /*foreach (var mesh in meshList)
             {
                 //mesh.GetComponent<MeshGenerator>().parentTransform = transform.parent;
                 //mesh.GetComponent<MeshGenerator>().UpdateMesh();
-            }
+            }*/
         }
     }
 
