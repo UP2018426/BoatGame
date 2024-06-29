@@ -8,7 +8,7 @@ using Random = UnityEngine.Random;
 
 public class BoatAi : MonoBehaviour
 {
-    enum BoatAiStates
+    public enum BoatAiStates
     {
         None = 0,
         Idle,
@@ -34,6 +34,7 @@ public class BoatAi : MonoBehaviour
     [SerializeField] private BoatAiRole role;
 
     [SerializeField] private BoatAiStates boatAiState;
+    public BoatAiStates GetBoatAiState() { return boatAiState; }
     
     private BoatAiStates lastAiState;
 
@@ -58,6 +59,9 @@ public class BoatAi : MonoBehaviour
     [SerializeField] private List<BoatController> boatsInRange = new();
 
     [SerializeField] private float sightRange = 25.0f;
+
+    [Header("Follow Camera")]
+    public Vector3 cameraLookPosition;
 
     void Start()
     {
@@ -206,7 +210,6 @@ public class BoatAi : MonoBehaviour
 
         Vector3 rayDirection = cutoffPoint - transform.position;
         RaycastHit hit;
-        //if (Physics.Raycast(cutoffPoint, transform.position - cutoffPoint, out hit, Mathf.Infinity, ~pathfindIgnore))
         if (Physics.Raycast(transform.position, rayDirection, out hit, rayDirection.magnitude, ~pathfindIgnore))
         {
             if (hit.collider.gameObject == target.gameObject)
@@ -281,7 +284,7 @@ public class BoatAi : MonoBehaviour
             for (int i = 0; i < cutoffPointsShortlist.Count; i++)
             {
                 float directionToTarget = CalculateDirectionToTarget(cutoffPointsShortlist[i]);
-                Debug.Log(directionToTarget);
+                //Debug.Log(directionToTarget);
                 
                 float distance = (cutoffPoints[i] - transform.position).magnitude;
                 if (closestDistance > distance)
@@ -291,10 +294,24 @@ public class BoatAi : MonoBehaviour
                     indexDirectionToTarget = directionToTarget;
                 }
             }
+
+            float directionMultiplier = indexDirectionToTarget > 0 ? -1 : 1;
+
+            // DirectionScale * Distancescale * direction
+            if (cutoffPointsShortlist.Count > 0)
+            {
+                float angleWeight = CalculateDirectionToTarget(cutoffPointsShortlist[closestIndex]) / 90f;
+
+                float distanceWeight = (((cutoffPointsShortlist[closestIndex] - transform.position).magnitude * -1) + sightRange) / sightRange;
+                
+                float rv = (-angleWeight * (distanceWeight * 100f))/* * directionMultiplier*/;
+
+                thisBoatController.throttle = distanceWeight;
+
+                return rv;
+            }
     
-            return /*float steerForce = */indexDirectionToTarget > 0 ? -1 : 1;
-    
-    
+            //return /*float steerForce = */indexDirectionToTarget > 0 ? -1 : 1;
     
             // For each object within a FOV angle F, calculate its cutoff point using the existing function FindCutoffPoint(). maybe dont have FOV???
             // For each cutoff point that lands in a smaller dot product value in front of the ship, find the nearest one
