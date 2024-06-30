@@ -63,5 +63,12 @@ public class BoatController : MonoBehaviour
     private void OnCollisionEnter(Collision other)
     {
         Debug.LogWarning(gameObject.name + " has collided with " + other.gameObject.name);
+
+        if (other.collider.CompareTag("Terrain"))
+        {
+            // Reverse for X seconds
+
+            
+        }
     }
 }

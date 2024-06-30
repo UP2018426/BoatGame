@@ -2660,7 +2660,7 @@ GameObject:
   - component: {fileID: 1242963234}
   m_Layer: 6
   m_Name: Terrain_3
-  m_TagString: Untagged
+  m_TagString: Terrain
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 2147483647
@@ -2788,7 +2788,7 @@ GameObject:
   - component: {fileID: 1362880957}
   m_Layer: 6
   m_Name: Terrain_4
-  m_TagString: Untagged
+  m_TagString: Terrain
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 2147483647
@@ -3312,7 +3312,7 @@ GameObject:
   - component: {fileID: 1581327117}
   m_Layer: 6
   m_Name: Terrain_5
-  m_TagString: Untagged
+  m_TagString: Terrain
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 2147483647
@@ -3948,7 +3948,7 @@ GameObject:
   - component: {fileID: 1705243377}
   m_Layer: 6
   m_Name: Terrain_2
-  m_TagString: Untagged
+  m_TagString: Terrain
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 2147483647
@@ -4285,7 +4285,7 @@ GameObject:
   - component: {fileID: 1809555918}
   m_Layer: 6
   m_Name: Terrain_1
-  m_TagString: Untagged
+  m_TagString: Terrain
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 2147483647

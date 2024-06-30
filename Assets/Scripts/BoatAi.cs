@@ -12,6 +12,7 @@ public class BoatAi : MonoBehaviour
     {
         None = 0,
         Idle,
+        Reversing,
         Wandering,
         Travelling,
         Following
@@ -103,6 +104,19 @@ public class BoatAi : MonoBehaviour
             }
         }
         
+        if (boatAiState == BoatAiStates.Reversing)
+        {
+            idleTime -= Time.deltaTime;
+            if (idleTime < 0.0f)
+            {
+                idleTime = 10f;
+                boatAiState = BoatAiStates.Idle;
+            }
+            
+            thisBoatController.throttle = -1f;
+            thisBoatController.steering = 0f;
+        }
+        
         if (boatAiState == BoatAiStates.Travelling)
         {
             UpdateNavigationTarget(target);
@@ -117,11 +131,14 @@ public class BoatAi : MonoBehaviour
     {
         if (otherCollider.TryGetComponent<Port>(out Port port))
         {
-            if (target.gameObject == port.gameObject)
+            if (target != null)
             {
-                Debug.Log("Entered port");
+                if (target.gameObject == port.gameObject)
+                {
+                    Debug.Log("Entered port");
 
-                boatAiState = BoatAiStates.Idle;
+                    boatAiState = BoatAiStates.Idle;
+                }
             }
         }
 
@@ -142,6 +159,17 @@ public class BoatAi : MonoBehaviour
             {
                 boatsInRange.Remove(otherBoat);
             }
+        }
+    }
+
+    private void OnCollisionEnter(Collision other)
+    {
+        if (other.collider.CompareTag("Terrain"))
+        {
+            // Reverse for X seconds
+            Debug.Log("Reversing");
+            idleTime = 10f;
+            boatAiState = BoatAiStates.Reversing;
         }
     }
 
@@ -309,6 +337,7 @@ public class BoatAi : MonoBehaviour
                 float rv = (-(angleWeight * AngleWeightScalar) + -(distanceWeight * DistanceWeightScalar));
 
                 thisBoatController.throttle = distanceWeight;
+                Debug.Log(distanceWeight);
 
                 return rv;
             }
