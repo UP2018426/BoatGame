@@ -337,7 +337,7 @@ public class BoatAi : MonoBehaviour
                 float rv = (-(angleWeight * AngleWeightScalar) + -(distanceWeight * DistanceWeightScalar));
 
                 thisBoatController.throttle = distanceWeight;
-                Debug.Log(distanceWeight);
+                //Debug.Log(distanceWeight);
 
                 return rv;
             }
